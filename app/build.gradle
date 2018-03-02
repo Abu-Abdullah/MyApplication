@@ -1,0 +1,64 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion "27.0.2"
+    defaultConfig {
+        applicationId "com.test.myapplication"
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        externalNativeBuild {
+            ndkBuild {
+                def gstRoot
+
+                if (project.hasProperty('gstAndroidRoot'))
+                    gstRoot = project.gstAndroidRoot
+                else
+                    throw new GradleException('"gstAndroidRoot" must be defined in your gradle.properties to the top level directory of the unpacked universal GStreamer Android binaries')
+
+                arguments "NDK_APPLICATION_MK=src/main/jni/Application.mk", "GSTREAMER_JAVA_SRC_DIR=src/main/java", "GSTREAMER_ROOT_ANDROID=$gstRoot", "GSTREAMER_ASSETS_DIR=src/main/assets"
+
+                targets "player", "gstreamer_android"
+
+                abiFilters 'armeabi'
+            }
+        }
+
+        jackOptions {
+            enabled true
+        }
+
+        vectorDrawables.useSupportLibrary = true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    externalNativeBuild {
+        ndkBuild {
+            path 'src/main/jni/Android.mk'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+afterEvaluate {
+    compileDebugJavaWithJavac.dependsOn 'externalNativeBuildDebug'
+    compileReleaseJavaWithJavac.dependsOn 'externalNativeBuildRelease'
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    compile 'com.android.support:support-v13:27.0.2'
+    compile 'com.android.support:design:27.0.2'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+}
