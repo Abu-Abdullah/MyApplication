@@ -16,6 +16,3 @@ raspivid -n -vf -hf -fl -t 0 -g 5 -ih -ex sports -w 640 -h 480 -b 0 -fps 40 -md 
 reference thread:
 https://lists.freedesktop.org/archives/gstreamer-android/2018-March/001192.html
 
-the requirement is to make this piece of code working.
-
-Any other enhancement to the code is accepted as well.
